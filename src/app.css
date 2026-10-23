@@ -1,0 +1,567 @@
+:root {
+  color-scheme: light;
+  --bg: #f5f5f4;
+  --bg-panel: #ffffff;
+  --bg-editor: #fafaf9;
+  --text: #1c1917;
+  --text-muted: #78716c;
+  --border: #e7e5e4;
+  --dot: #dcd9d4;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+  --danger: #dc2626;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0c0a09;
+  --bg-panel: #1c1917;
+  --bg-editor: #171412;
+  --text: #fafaf9;
+  --text-muted: #a8a29e;
+  --border: #292524;
+  --dot: #2a2724;
+  --accent: #60a5fa;
+  --accent-foreground: #0c0a09;
+  --danger: #f87171;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', Roboto, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button.primary {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: transparent;
+}
+
+button.primary:hover {
+  color: var(--accent-foreground);
+  opacity: 0.9;
+}
+
+input[type='text'],
+input[type='number'],
+textarea,
+select {
+  background: var(--bg-editor);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  width: 100%;
+}
+
+input[type='color'] {
+  width: 100%;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-editor);
+}
+
+input[type='checkbox'] {
+  accent-color: var(--accent);
+}
+
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 320px;
+  grid-template-areas:
+    'topbar topbar'
+    'main panel';
+  height: 100vh;
+  gap: 0;
+}
+
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.topbar .spacer {
+  flex: 1;
+}
+
+.main {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+}
+
+.editor-area {
+  border-right: 1px solid var(--border);
+  background: var(--bg-editor);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.editor-area .cm-host {
+  flex: 1;
+  min-height: 0;
+}
+
+.preview-area {
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+  background-size: 18px 18px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.preview-area .cm-host {
+  flex: 1;
+  min-height: 0;
+}
+
+.main > .editor-area,
+.main > .preview-area,
+.main > .panel {
+  min-height: 0;
+  max-height: 100%;
+}
+
+.panel {
+  grid-area: panel;
+  border-left: 1px solid var(--border);
+  background: var(--bg-panel);
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.panel h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.panel .section {
+  margin-bottom: 20px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.field .hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.preset-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  background: var(--bg-editor);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  min-width: 0;
+}
+
+.preset-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.preset-card.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.preset-card .preset-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.preset-card .name {
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preset-card .desc {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.swatches {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid;
+}
+
+.dot-line {
+  border-color: transparent;
+  border-radius: 2px;
+  width: 16px;
+  height: 5px;
+}
+
+.error-banner {
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  border-bottom: 1px solid var(--danger);
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+/* 预览画布：容器链高度确定化，svg 铺满（ZoomViewer 内部按 viewBox 比例
+   contain 铺满）；滚轮缩放改的是 SVG 元素自身的 width/height 属性，
+   浏览器会按新尺寸重新以矢量渲染，文字放大后依然锐利 */
+.viewer {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  padding: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 缩放查看器：内容定位用 translate（纯位移不改变栅格化分辨率） */
+.zoom-viewer {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.zoom-viewer.grab {
+  cursor: grab;
+}
+
+.zoom-viewer-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  cursor: zoom-in;
+  /* 拖拽时禁止选中文本 */
+  user-select: none;
+}
+
+.zoom-viewer.grab .zoom-viewer-inner {
+  cursor: grab;
+}
+
+.zoom-viewer-inner.dragging {
+  cursor: grabbing;
+}
+
+.zoom-viewer.grab .zoom-viewer-inner.dragging {
+  cursor: grabbing;
+}
+
+.zoom-viewer-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* mermaid 输出的 svg 自带 style="max-width: XXpx"，顶掉才能按容器自适应 */
+.zoom-viewer svg {
+  max-width: none !important;
+  display: block;
+}
+
+.zoom-badge {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--bg-panel) 85%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.zoom-badge:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.loading {
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 12px;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.dialog {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  width: 380px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.dialog h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.dialog .row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.dialog .row > * {
+  flex: 1;
+}
+
+.dialog .actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.advanced-json {
+  width: 100%;
+  min-height: 120px;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 12px;
+  resize: vertical;
+}
+
+/* CodeMirror 主题适配 */
+.cm-editor {
+  height: 100%;
+  background: var(--bg-editor) !important;
+  color: var(--text) !important;
+  font-family: 'SF Mono', Consolas, 'Courier New', monospace !important;
+  font-size: 13px;
+}
+
+.cm-gutters {
+  background: var(--bg-editor) !important;
+  color: var(--text-muted) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+.cm-activeLine {
+  background: color-mix(in srgb, var(--accent) 6%, transparent) !important;
+}
+
+.cm-cursor {
+  border-left-color: var(--text) !important;
+}
+
+.cm-error-line {
+  background: color-mix(in srgb, var(--danger) 15%, transparent) !important;
+  border-left: 3px solid var(--danger);
+}
+
+/* === Zoom Modal === */
+.zoom-backdrop {
+  z-index: 60;
+}
+
+.zoom-modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  width: min(94vw, 1600px);
+  height: min(92vh, 1000px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.zoom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.zoom-header h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.zoom-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zoom-tool {
+  min-width: 30px;
+  padding: 4px 8px;
+  font-size: 15px;
+  line-height: 1.1;
+  font-family: 'SF Mono', Consolas, monospace;
+}
+
+.zoom-tool.wide {
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 10px;
+}
+
+.zoom-level {
+  min-width: 52px;
+  text-align: center;
+  font-size: 12px;
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.zoom-close {
+  padding: 4px 10px;
+  font-size: 16px;
+  line-height: 1;
+  margin-left: 6px;
+}
+
+.zoom-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+  background-size: 18px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.zoom-footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  user-select: none;
+}
