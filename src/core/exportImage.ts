@@ -143,13 +143,28 @@ function foreignObjectSvg(svg: string): string {
     // dominant-baseline=central 让 y 直接作为垂直中心
     text.setAttribute('dominant-baseline', 'central');
 
-    if (st?.isEdge) {
-      // 边标签描边光晕（压在连线上也清晰）；有背景色时用背景色当光晕
-      text.setAttribute('stroke', st.bg && st.bg !== 'transparent' ? st.bg : halo);
-      text.setAttribute('stroke-width', String(Math.max(2.5, fontSizePx * 0.22)));
-      text.setAttribute('stroke-linejoin', 'round');
-      text.setAttribute('paint-order', 'stroke');
-    }
+    /**
+     * mermaid 的 classDef 会生成 `.xxx span { fill:...; stroke:...; stroke-width:1.5px !important }`。
+     * 实时 DOM 里 span 是 HTML 元素，fill/stroke 不渲染，所以屏幕上看不出来；
+     * 但导出成原生 <text> 后，这些样式就变成了实打实的「彩色填充 + 描边」，
+     * 导致导出的节点文字又粗又花（与屏幕上的深灰常规体完全不一致）。
+     *
+     * 这里用内联 style + !important 反制：文字色锁死、描边清零、字重归一。
+     * 边标签例外——它需要描边光晕，所以单独用光晕色描边。
+     */
+    const haloColor = st?.bg && st.bg !== 'transparent' ? st.bg : halo;
+    const isEdge = !!st?.isEdge;
+    text.setAttribute(
+      'style',
+      `fill:${st?.color || '#000'} !important;` +
+        (isEdge
+          ? `stroke:${haloColor} !important;` +
+            `stroke-width:${Math.max(2.5, fontSizePx * 0.22)} !important;` +
+            'stroke-linejoin:round !important;' +
+            'paint-order:stroke !important;'
+          : 'stroke:none !important;stroke-width:0 !important;') +
+        'font-weight:inherit !important;'
+    );
 
     lines.forEach((line) => {
       const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
