@@ -231,6 +231,7 @@ Mermaid 的 `htmlLabels` 用 `display: table-cell; white-space: nowrap; max-widt
 
 - **每行 y 用真实行中心**：实时渲染的行矩形中心 ÷ 视口缩放换算成 viewBox 用户单位，不假设行高；`x` 取 foreignObject 水平中心。
 - **文字色取每个标签的计算 `color`**：HTML span 上的 `fill` 是继承来的背景色（比如节点填充色 `#eff6ff`），拿来当文字色会让导出的文字几乎看不见。
+- **必须中和 `classDef` 样式**：mermaid 会把 `classDef ui fill:#eef4ff,stroke:#3b82f6` 变成 `.ui span { fill:#eef4ff; stroke:#3b82f6; stroke-width:1.5px !important }`。屏幕上标签是 HTML `span`，`fill`/`stroke` 根本不渲染，看不出问题；但导出成原生 `<text>` 后，这些样式就变成了实打实的彩色填充 + 1.5px 描边 —— 导出的节点文字又粗又花，而屏幕上是深灰常规体。导出时用内联 `!important` 锁死文字色、清零描边。边标签是例外：它需要描边光晕才能看清，所以保留描边。
 - **边标签加 `paint-order` 描边光晕**：流程图的边标签没有背景，导出的文字直接压在连线上。光晕的明暗按 SVG **自身背景色亮度**判断（`isDarkSvg` 解析 `.background{fill:...}`），而不是界面明暗 —— 界面亮 + 暗色图表预设时白底光晕会很难看。
 - **空 label 容器必须 `remove()`**：无标签的边也会渲染一个空 span，残留任何 foreignObject 都会让 Chrome 把画布判为污染，`toBlob` 返回 null，导出静默失败。
 

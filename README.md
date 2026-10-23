@@ -231,6 +231,7 @@ Other export details:
 
 - **Each line's `y` is its real line center** — the live rect center divided by the viewport scale, converted to viewBox units. No row-height assumptions.
 - **Text color comes from each label's computed `color`** — the `fill` inherited on an HTML span is the *background* color (e.g. `#eff6ff`), which would make exported text nearly invisible.
+- **`classDef` styles must be neutralized.** Mermaid turns `classDef ui fill:#eef4ff,stroke:#3b82f6` into a rule like `.ui span { fill:#eef4ff; stroke:#3b82f6; stroke-width:1.5px !important }`. On screen the label is an HTML `span`, where `fill`/`stroke` never render, so nothing looks wrong. But once the `foreignObject` becomes a native `<text>`, those styles turn into a real colored fill plus a 1.5 px stroke — the exported labels come out bold and garish while the live render stays dark grey. The exporter therefore pins the label color and zeroes the stroke with inline `!important` styles. Edge labels are the exception: they *need* a stroke for legibility, so they keep a halo.
 - **Edge labels get a `paint-order: stroke` halo** — flowchart edge labels have no background, so exported text sits directly on the line. Halo lightness is decided from the **SVG's own background brightness** (`isDarkSvg` parses `.background{fill:...}`), not the interface theme — a white halo on a dark diagram preset would look terrible.
 - **Empty label containers must be `remove()`d** — edges without labels still render an empty span, and *any* leftover `foreignObject` taints the canvas.
 
